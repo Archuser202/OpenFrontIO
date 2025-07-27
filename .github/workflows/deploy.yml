@@ -81,7 +81,7 @@ jobs:
         uses: chrnorm/deployment-action@v2
         id: deployment
         with:
-          token: ${{ steps.generate-token.outputs.token }}
+          token: ${{ secrets.SMTH }}
           environment-url: https://${{ env.FQDN }}
           environment: ${{ inputs.target_domain == 'openfront.io' && 'prod' || 'staging' }}
       - name: 🔗 Log in to Docker Hub
@@ -147,7 +147,7 @@ jobs:
         if: success()
         uses: chrnorm/deployment-status@v2
         with:
-          token: ${{ steps.generate-token.outputs.token }}
+          token: ${{ secrets.SMTH }}
           environment-url: https://${{ env.FQDN }}
           state: success
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
@@ -163,7 +163,7 @@ jobs:
         if: failure()
         uses: chrnorm/deployment-status@v2
         with:
-          token: ${{ steps.generate-token.outputs.token }}
+          token: ${{ secrets.SMTH }}
           environment-url: https://${{ env.FQDN }}
           state: failure
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
