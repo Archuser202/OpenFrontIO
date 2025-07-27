@@ -1,4 +1,4 @@
-name: Manual Build
+name: Inline Commit Build
 
 on:
   workflow_dispatch:
@@ -8,21 +8,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: 🧱 Checkout repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # needed to allow history rewriting
 
-      - name: Setup Node.js
+      - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install deps
+      - name: 📦 Install dependencies
         run: npm install
 
-      - name: Build the project
+      - name: 🛠️ Build the project
         run: npm run build-prod
 
-      - name: Upload built files
-        uses: actions/upload-artifact@v4  # ← FIXED HERE
-        with:
-          name: openfront-map-editor
-          path: dist/
+      - name: 📁 Copy index.html to repo root
+        run: cp dist/index.html built-index.html
+
+      - name: 🚀 Commit built file to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add built-index.html
+          git commit -m "🤖 auto: built index.html [skip ci]" || echo "No changes to commit"
+          git push
